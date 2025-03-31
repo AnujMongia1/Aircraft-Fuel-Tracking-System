@@ -1,0 +1,4 @@
+﻿  Source.cpp
+C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\Server\Source.cpp(23,22): warning C4244: 'initializing': conversion from 'SOCKET' to 'int', possible loss of data
+C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\Server\Source.cpp(37,22): warning C4244: 'initializing': conversion from 'SOCKET' to 'int', possible loss of data
+  Server.vcxproj -> C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\x64\Debug\Server.exe
