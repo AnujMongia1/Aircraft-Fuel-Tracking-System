@@ -7,13 +7,22 @@
 #include<iostream>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <thread>
 
 using namespace std;
+
+void handleConnection(int clientSocket) {
+
+    //printing message from clients
+    char buffer[1024] = { 0 };
+    recv(clientSocket, buffer, sizeof(buffer), 0);
+    cout << "Mesasage from Client: " << buffer << endl;
+
+}
 
 int main() {
 
     WSADATA wsaData;
-
 
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         fprintf(stderr, "WSAStartup failed.\n");
@@ -35,12 +44,12 @@ int main() {
     //listening for unlimited number of connections (SYS-001)
     listen(serverSocket, INT_MAX);
 
-    int clientSocket = accept(serverSocket, nullptr, nullptr);
+    while (true) {
+        int clientSocket = accept(serverSocket, nullptr, nullptr);
+        thread newThread(handleConnection, clientSocket);
+        newThread.detach();
 
-    //printing message from clients
-    char buffer[1024] = { 0 };
-    recv(clientSocket, buffer, sizeof(buffer), 0);
-    cout << "Mesasage from Client: " << buffer << endl;
+    }
 
     // to stop app from closing
     getchar();
