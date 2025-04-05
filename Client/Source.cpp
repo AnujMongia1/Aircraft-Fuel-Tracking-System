@@ -9,6 +9,8 @@
 #include <sstream>
 #include <fstream>
 #include <iomanip>
+#include <chrono>
+#include <random>
 
 using namespace std;
 
@@ -16,7 +18,7 @@ class AircraftData {
 
 public:
 
-    int clientUniqueId;
+    long long clientUniqueId;
     string transmittedData;
     double fuelData;
     string dateTime;
@@ -31,7 +33,7 @@ public:
         packetType = "";
     }
 
-    AircraftData(int id, string data, double fuel, string date_time, string type) {
+    AircraftData(long long id, string data, double fuel, string date_time, string type) {
 
         clientUniqueId = id;
         transmittedData = data;
@@ -51,11 +53,13 @@ public:
     }
 
     //############# SYS-050 ###############
-    static int generateUniqueClientId() {
 
-        srand(static_cast<unsigned>(time(0)));
-        return 10000 + rand() % 90000;
+    static long long generateUniqueClientId() {
 
+        static std::random_device rd;
+        static std::mt19937_64 gen(rd());
+        static std::uniform_int_distribution<long long> dis(1000000000LL, 9999999999LL);
+        return dis(gen);
     }
 
 };
@@ -98,7 +102,7 @@ int main()
     }
 
     //############# SYS-050 ###############
-    int uniqueId = AircraftData::generateUniqueClientId();
+    long long uniqueId = AircraftData::generateUniqueClientId();
     cout << "Client Unique ID: " << uniqueId << endl;
 
     // sending data

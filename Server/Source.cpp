@@ -19,7 +19,7 @@ class AircraftData{
 
 public:
 
-    int clientUniqueId;
+    long long clientUniqueId;
     string transmittedData;
     double fuelData;
     string dateTime;
@@ -35,7 +35,7 @@ public:
         packetType = "";
     }
 
-    AircraftData(int id, string data, double fuel, string date_time, string type) {
+    AircraftData(long long id, string data, double fuel, string date_time, string type) {
 
         clientUniqueId = id;
         transmittedData = data;
@@ -59,7 +59,7 @@ public:
 
          if (items.size() >= 5) {
 
-             ad.clientUniqueId = stoi(items[0]);
+             ad.clientUniqueId = stoll(items[0]);
              ad.transmittedData = items[1];
              ad.fuelData = stod(items[2]);
              ad.dateTime = items[3];
