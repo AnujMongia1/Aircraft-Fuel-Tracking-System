@@ -44,13 +44,15 @@ public:
     }
 
     string serializePacket() {
-
         stringstream ss;
-
-        ss << fixed << setprecision(6) << clientUniqueId << "|" << transmittedData << "|" << fuelData << "|" << dateTime << "|" << packetType;
+        ss << clientUniqueId << "|"
+            << transmittedData << "|"
+            << fixed << setprecision(6) << fuelData << "|"
+            << dateTime << "|"
+            << packetType;
         return ss.str();
-
     }
+
 
     //############# SYS-050 ###############
 
@@ -58,7 +60,7 @@ public:
 
         static std::random_device rd;
         static std::mt19937_64 gen(rd());
-        static std::uniform_int_distribution<long long> dis(1000000000LL, 9999999999LL);
+        static std::uniform_int_distribution<long long> dis(100000000LL, 999999999LL);
         return dis(gen);
     }
 

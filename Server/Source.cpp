@@ -12,8 +12,16 @@
 #include <vector>
 #include <fstream>
 #include <iomanip>
+#include <mutex>
+#include <unordered_map>
+
 
 using namespace std;
+
+mutex fuelMutex;
+unordered_map<long long, double> clientPrevFuelReading;
+mutex clientMapMutex;
+
 
 class AircraftData{
 
@@ -94,11 +102,8 @@ public:
          string item;
 
          while (getline(ss, item, ',')) {
-
              item = trim(item);
              items.push_back(item);
-
-
          }
 
          // saving fuel data to a file named with ClientUniqueId
@@ -106,58 +111,63 @@ public:
          ofstream outfile;
          double consumption = 0.0;
 
-         //parsing first line
+         // Parse values from items
          if (dataLine.find("FUEL TOTAL QUANTITY") != string::npos) {
-
              if (items.size() == 3) {
-
                  dateTime = items[1];
                  fuelData = stod(items[2]);
-
              }
-
-             consumption = 0.0;
-             AircraftData::prevFuelReading = fuelData;
-             outfile.open(filename, ios::out);
-
          }
-
-
-         //parsing all other lines
          else {
-            
              if (items.size() == 2) {
-
                  dateTime = items[0];
                  fuelData = stod(items[1]);
-
              }
+         }
 
-             consumption = AircraftData::prevFuelReading - fuelData;
-             AircraftData::prevFuelReading = fuelData;
+         // Compute consumption using a per-client map
+         {
+             lock_guard<mutex> lock(clientMapMutex);
+
+             auto it = clientPrevFuelReading.find(clientUniqueId);
+             if (dataLine.find("FUEL TOTAL QUANTITY") != string::npos) {
+                 consumption = 0.0;
+                 clientPrevFuelReading[clientUniqueId] = fuelData;
+             }
+             else {
+                 if (it == clientPrevFuelReading.end()) {
+                     consumption = 0.0;
+                     clientPrevFuelReading[clientUniqueId] = fuelData;
+                 }
+                 else {
+                     consumption = it->second - fuelData;
+                     it->second = fuelData;
+                 }
+             }
+         }
+
+         // Open file in appropriate mode
+         if (dataLine.find("FUEL TOTAL QUANTITY") != string::npos) {
+             outfile.open(filename, ios::out);
+         }
+         else {
              outfile.open(filename, ios::app);
-
          }
 
          //############# SYS-010 - c ###############
          if (outfile.is_open()) {
-
              if (fuelData != 0.000000) {
-
                  outfile << fixed << setprecision(6) << consumption << "\n";
                  outfile.close();
              }
          }
-
          else {
-             cerr << "File could not be openend: " << filename << endl;
-
+             cerr << "File could not be opened: " << filename << endl;
          }
      }
 
-};
 
-double AircraftData::prevFuelReading = 0.0;
+};
 
 
 void calculateAverageFuelConsumption(int clientUniqueId) {
@@ -167,7 +177,7 @@ void calculateAverageFuelConsumption(int clientUniqueId) {
 
     if (!inputFile.is_open()) {
 
-        cerr << "File could not be opened: " << fileName << ".txt" << endl;
+        cerr << "File could not be opened: " << fileName << endl;
 
     }
 

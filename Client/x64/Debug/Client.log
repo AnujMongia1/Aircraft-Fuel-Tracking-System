@@ -1,5 +1,5 @@
 ﻿  Source.cpp
-C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\Client\Source.cpp(74,22): warning C4244: 'initializing': conversion from 'SOCKET' to 'int', possible loss of data
-C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\Client\Source.cpp(114,77): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\Client\Source.cpp(123,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\Client\Source.cpp(80,22): warning C4244: 'initializing': conversion from 'SOCKET' to 'int', possible loss of data
+C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\Client\Source.cpp(120,77): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\Client\Source.cpp(129,73): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   Client.vcxproj -> C:\Users\anujm\source\repos\Aircraft-Fuel-Tracking-System\x64\Debug\Client.exe
