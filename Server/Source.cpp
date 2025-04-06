@@ -20,7 +20,8 @@ using namespace std;
 
 unordered_map<long long, double> clientPrevFuelReading;
 mutex clientMapMutex;
-int activeClientCount = 0;
+int totalClientCount = 0;
+std::atomic<int> totalClientCountDoneProcessing = 0;
 
 
 class AircraftData{
@@ -270,11 +271,10 @@ void handleConnection(int clientSocket) {
         }
 
         lineBuffer.append(recvBuffer, bytesReceived);
-
-        
         
         if (processPacketLines(lineBuffer)) {
-            cout << "All data from Client has been received." << endl;
+            totalClientCountDoneProcessing++;
+            cout << "All data from Client " << totalClientCountDoneProcessing << " has been received." << endl;
             break;
         }
     }
