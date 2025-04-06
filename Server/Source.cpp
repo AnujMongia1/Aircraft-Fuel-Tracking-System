@@ -18,9 +18,9 @@
 
 using namespace std;
 
-mutex fuelMutex;
 unordered_map<long long, double> clientPrevFuelReading;
 mutex clientMapMutex;
+int activeClientCount = 0;
 
 
 class AircraftData{
@@ -125,7 +125,7 @@ public:
              }
          }
 
-         // Compute consumption using a per-client map
+         
          {
              lock_guard<mutex> lock(clientMapMutex);
 
@@ -212,9 +212,10 @@ void calculateAverageFuelConsumption(int clientUniqueId) {
 }
 
 
-void processPacketLines(string& buffer) {
+bool processPacketLines(string& buffer) {
 
     size_t pos = 0;
+    bool EOFPacketFound = false;
 
     while ((pos = buffer.find('\n')) != string::npos) {
 
@@ -230,20 +231,27 @@ void processPacketLines(string& buffer) {
 
         if (ad.packetType == "EOF") {
 
-            cout << "ClientID:" << ad.clientUniqueId << " | Data Received: \"" << ad.transmittedData << "\" | Packet Type: EOF" << endl;
-            cout << "All data from Client has been received." << endl;
+            //removing cout statement for performance improvement
+            
+            //cout << "ClientID:" << ad.clientUniqueId << " | Data Received: \"" << ad.transmittedData << "\" | Packet Type: EOF" << endl;
+            //cout << "All data from Client has been received." << endl;
             calculateAverageFuelConsumption(ad.clientUniqueId);
-            return;
+            EOFPacketFound = true;
+            break;
         }
 
         else {
-            cout << "ClientID:" << ad.clientUniqueId << " | Data Received: \"" << ad.transmittedData << "\" | Packet Type: Data" << endl;
+
+            //removing cout statements for perfortmance improvement
+            
+            //cout << "ClientID:" << ad.clientUniqueId << " | Data Received: \"" << ad.transmittedData << "\" | Packet Type: Data" << endl;
         }
 
         //############# SYS-010 - b ###############
         ad.parseData();
 
     }
+    return EOFPacketFound;
 }
 
 
@@ -263,9 +271,9 @@ void handleConnection(int clientSocket) {
 
         lineBuffer.append(recvBuffer, bytesReceived);
 
-        processPacketLines(lineBuffer);
         
-        if (lineBuffer.find("EOF") != string::npos) {
+        
+        if (processPacketLines(lineBuffer)) {
             cout << "All data from Client has been received." << endl;
             break;
         }
