@@ -107,12 +107,10 @@ public:
              items.push_back(item);
          }
 
-         // saving fuel data to a file named with ClientUniqueId
          string filename = to_string(clientUniqueId) + ".txt";
          ofstream outfile;
          double consumption = 0.0;
 
-         // Parse values from items
          if (dataLine.find("FUEL TOTAL QUANTITY") != string::npos) {
              if (items.size() == 3) {
                  dateTime = items[1];
@@ -147,7 +145,6 @@ public:
              }
          }
 
-         // Open file in appropriate mode
          if (dataLine.find("FUEL TOTAL QUANTITY") != string::npos) {
              outfile.open(filename, ios::out);
          }
@@ -256,7 +253,6 @@ bool processPacketLines(string& buffer) {
 }
 
 
-//handling client connection (receiving data)
 void handleConnection(int clientSocket) {
 
 
